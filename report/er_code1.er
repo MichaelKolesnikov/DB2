@@ -1,0 +1,92 @@
+#Entity Address
+	state
+	city
+	street_name
+	postal_code
+
+#Entity School
+	name
+	
+#Entity Person
+	passport_series_number
+	full_name
+	birthday
+	role
+
+#Entity Subject
+	name
+	score_mapping_json
+
+#Entity Exam
+	date_time
+
+#Entity Task
+	number
+	description
+	price
+	variant
+
+#Relation written_task
+	Task[0,N]
+	Person[0,N]
+	grade
+
+#Relation held_in
+	Exam[0,N]
+	School[1,1]
+
+#Relation place
+	School[0,1]
+	Address[1,1]
+
+#Relation lead
+	Person[0,N]
+	Subject[0,1]
+
+#Relation work_at
+	Person[0,N]
+	School[0,1]
+
+#Relation go_to
+	Person[0,N]
+	Exam[0,N]
+
+#Relation live_at
+	Person[0,N]
+	Address[1,1]
+
+#Relation define_task
+	Subject[1,1]
+	Task[0,N]
+
+#Relation define_exam
+	Subject[1,1]
+	Exam[0,N]
+
+#Entity ExamResult
+	score
+	status
+	comments
+
+#Relation has_result
+	Person[1,1]
+	ExamResult[0,N]
+
+#Relation for_subject
+	Subject[1,1]
+	ExamResult[0,N]
+
+#Relation in_exam
+	Exam[1,1]
+	ExamResult[0,N]
+
+#Entity Classroom
+	number
+
+#Relation in
+	Classroom[0,N]
+	School[1,1]
+
+#Relation held_in_classroom
+	Exam[0,N]
+	Classroom[1,1]
