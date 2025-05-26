@@ -158,7 +158,6 @@
             \end{itemize}
 \end{itemize}
 
-
 \section{Концептуальное проектирование}
 
 \subsection{Принятые проектные соглашения}
@@ -317,13 +316,6 @@ SchoolsNoExams(id) = (School)[School.school_id] \ (Exam)[Exam.school_id]
 SchoolChildren(id, score) = (Person[Person.role='SchoolChild' & Person.person_id = ExamResult.person_id]ExamResult)[person_id, score]
 CoolSchoolChildren(id) = (SchoolChildren \ SchoolChildren[score != 100])[id]
             \end{lstlisting}
-
-      \item Получить всех учителей, которые преподают в школе, не находящейся в городе, в котором они живут
-            \begin{lstlisting}[basicstyle=\ttfamily\small, breaklines=true, frame=none, numbers=none]
-T(Person.person_id, Person.school_id, Address.city) = (Person[Person.role = 'Teacher' & Person.address_id = Address.address_id]Address)[Person.person_id, Person.school_id, Address.city]
-S(School.school_id, Address.city) = (School[School.address_id = Address.address_id]Address)[School.school_id, Address.city]
-PoorTeachers(person_id) = (T[T.school_id = S.school_id & T.city != S.city]S)[person_id]
-\end{lstlisting}
 \end{itemize}
 
 
@@ -339,62 +331,250 @@ PoorTeachers(person_id) = (T[T.school_id = S.school_id & T.city != S.city]S)[per
       \item Наконец, PostgreSQL хорошо интегрируется с Python через библиотеки psycopg и SQLAlchemy, что важно на этапе генерации и заполнения данных.
 \end{itemize}
 
-Таким образом, PostgreSQL является оптимальным выбором как с технической, так и с
-практической точек зрения.
+Таким образом, PostgreSQL является оптимальным выбором как с технической, так и с практической точек зрения.
 
 \subsection{Создание базы данных}
-\lstinputlisting[language=yaml, label={lst:docker-compose}, frame=none, numbers=none]{data/database_creating.yml}
+Конфигурация Docker Compose для создания базы данных: ~\ref{subsec:db-create}
 
 \subsection{Создание таблиц}
-\lstinputlisting[language=SQL, label={lst:sql-example}, frame=none, numbers=none]{data/tables_creating.sql}
+Код для создания таблиц в базе данных: ~\ref{subsec:table-create}
 
 \subsection{Заполнение таблиц. ETL-процессы загрузки базы данных}
-\subsection{Запросы в терминах SQL}
-
 \begin{itemize}
-      \item Получить всех учителей, зарегистрированных на экзамен по предмету "Name"
-            \begin{lstlisting}[language=SQL, label={lst:sql-example}, frame=none, numbers=none]
+      \item Файл создания заданий: ~\ref{subsec:python1}
+      \item Файл создания информации о школах: ~\ref{subsec:python2}
+      \item Файл создания информации об экзаменах: ~\ref{subsec:python3}
+      \item Файл создания создания информации об учителях: ~\ref{subsec:python4}
+      \item Файл создания создания информации о школах: ~\ref{subsec:python5}
+\end{itemize}
+
+\subsection{Запросы в терминах SQL}
+\begin{itemize}
+      \item Получить всех учителей, зарегистрированных на экзамен по предмету "Name"  ~\ref{subsec:sql1}
+      \item Найти всех школьников, не зарегистрированных ни на один экзамен  ~\ref{subsec:sql2}
+      \item Получить список предметов, по которым проводились экзамены в школе Name ~\ref{subsec:sql3}
+      \item Найти всех учеников, получивших хотя бы одну неудовлетворительную оценку (<40) ~\ref{subsec:sql4}
+      \item Получить список школ, в которых нет зарегистрированных экзаменов ~\ref{subsec:sql5}
+      \item Найти всех школьников, у которых по всем предметам, которые он сдавал, 100 баллов ~\ref{subsec:sql6}
+      \item Вывести средние баллы по предметам по школам ~\ref{subsec:sql7}
+      \item Вывести учеников с максимальным средним баллом ~\ref{subsec:sql8}
+\end{itemize}
+
+\subsection{Оценка размеров базы данных и каждого из файлов}
+
+{\small
+      \begin{longtable}{l p{2cm} p{2cm} r r r r}
+            \toprule
+            \textbf{Relation} & \textbf{Attributes}  & \textbf{Type}        & \textbf{Size (bytes)} & \textbf{Avg Records}       & \textbf{Total Size (bytes)}   & \textbf{Total Size (MB)} \\
+            \midrule
+            \endhead
+
+            \bottomrule
+            \endfoot
+
+            \multirow{5}{*}{Address}
+                              & address\_id          & SERIAL               & 4                     & \multirow{5}{*}{251,000}   & \multirow{5}{*}{44,678,000}   & \multirow{5}{*}{42.6}    \\
+                              & region               & VARCHAR(40)          & 40                    &                            &                               &                          \\
+                              & city                 & VARCHAR(30)          & 30                    &                            &                               &                          \\
+                              & street               & VARCHAR(100)         & 100                   &                            &                               &                          \\
+                              & postal\_code         & INTEGER              & 4                     &                            &                               &                          \\ \addlinespace
+            \hline
+
+            \multirow{3}{*}{School}
+                              & school\_id           & SERIAL               & 4                     & \multirow{3}{*}{1,000}     & \multirow{3}{*}{158,000}      & \multirow{3}{*}{0.15}    \\
+                              & school\_name         & VARCHAR(150)         & 150                   &                            &                               &                          \\
+                              & school\_number       & INTEGER              & 4                     &                            &                               &                          \\
+                              & address\_id          & INTEGER              & 4                     &                            &                               &                          \\ \addlinespace
+            \hline
+
+            \multirow{11}{*}{Person}
+                              & person\_id           & SERIAL               & 4                     & \multirow{11}{*}{650,000}  & \multirow{11}{*}{123,500,000} & \multirow{11}{*}{117.8}  \\
+                              & passport\_series     & VARCHAR(10)          & 10                    &                            &                               &                          \\
+                              & passport\_number     & VARCHAR(10)          & 10                    &                            &                               &                          \\
+                              & last\_name           & VARCHAR(50)          & 50                    &                            &                               &                          \\
+                              & first\_name          & VARCHAR(50)          & 50                    &                            &                               &                          \\
+                              & middle\_name         & VARCHAR(50)          & 50                    &                            &                               &                          \\
+                              & birthday             & DATE                 & 4                     &                            &                               &                          \\
+                              & role                 & person\_role         & 10                    &                            &                               &                          \\
+                              & address\_id          & INTEGER              & 4                     &                            &                               &                          \\
+                              & school\_id           & INTEGER              & 4                     &                            &                               &                          \\
+                              & subject\_id          & INTEGER              & 4                     &                            &                               &                          \\ \addlinespace
+            \hline
+
+            \multirow{3}{*}{Subject}
+                              & subject\_id          & SERIAL               & 4                     & \multirow{3}{*}{16}        & \multirow{3}{*}{2,144}        & \multirow{3}{*}{0.002}   \\
+                              & name                 & VARCHAR(30)          & 30                    &                            &                               &                          \\
+                              & score\_mapping\_json & JSONB                & 100                   &                            &                               &                          \\ \addlinespace
+            \hline
+
+            \multirow{5}{*}{Exam}
+                              & exam\_id             & SERIAL               & 4                     & \multirow{5}{*}{8,000}     & \multirow{5}{*}{192,000}      & \multirow{5}{*}{0.18}    \\
+                              & date\_time           & TIMESTAMP            & 8                     &                            &                               &                          \\
+                              & subject\_id          & INTEGER              & 4                     &                            &                               &                          \\
+                              & school\_id           & INTEGER              & 4                     &                            &                               &                          \\
+                              & classroom\_id        & INTEGER              & 4                     &                            &                               &                          \\ \addlinespace
+
+
+            \multirow{7}{*}{ExamResult}
+                              & exam\_result\_id     & SERIAL               & 4                     & \multirow{7}{*}{1,500,000} & \multirow{7}{*}{195,000,000}  & \multirow{7}{*}{186.0}   \\
+                              & score                & INTEGER              & 4                     &                            &                               &                          \\
+                              & status               & exam\_result\_status & 10                    &                            &                               &                          \\
+                              & comments             & VARCHAR              & 100                   &                            &                               &                          \\
+                              & person\_id           & INTEGER              & 4                     &                            &                               &                          \\
+                              & subject\_id          & INTEGER              & 4                     &                            &                               &                          \\
+                              & exam\_id             & INTEGER              & 4                     &                            &                               &                          \\ \addlinespace
+            \hline
+
+            \multirow{6}{*}{Task}
+                              & task\_id             & SERIAL               & 4                     & \multirow{6}{*}{48,000}    & \multirow{6}{*}{5,760,000}    & \multirow{6}{*}{5.49}    \\
+                              & number               & INTEGER              & 4                     &                            &                               &                          \\
+                              & description          & VARCHAR              & 100                   &                            &                               &                          \\
+                              & price                & INTEGER              & 4                     &                            &                               &                          \\
+                              & variant              & INTEGER              & 4                     &                            &                               &                          \\
+                              & subject\_id          & INTEGER              & 4                     &                            &                               &                          \\ \addlinespace
+
+            \multirow{3}{*}{Classroom}
+                              & classroom\_id        & SERIAL               & 4                     & \multirow{3}{*}{20,000}    & \multirow{3}{*}{360,000}      & \multirow{3}{*}{0.34}    \\
+                              & number               & VARCHAR(10)          & 10                    &                            &                               &                          \\
+                              & school\_id           & INTEGER              & 4                     &                            &                               &                          \\ \addlinespace
+            \hline
+
+            \multirow{3}{*}{WrittenTask}
+                              & task\_id             & INTEGER              & 4                     & \multirow{3}{*}{3,000,000} & \multirow{3}{*}{36,000,000}   & \multirow{3}{*}{34.33}   \\
+                              & person\_id           & INTEGER              & 4                     &                            &                               &                          \\
+                              & grade                & INTEGER              & 4                     &                            &                               &                          \\ \addlinespace
+            \hline
+
+            \multirow{2}{*}{PersonExam}
+                              & person\_id           & INTEGER              & 4                     & \multirow{2}{*}{1,500,000} & \multirow{2}{*}{12,000,000}   & \multirow{2}{*}{11.44}   \\
+                              & exam\_id             & INTEGER              & 4                     &                            &                               &                          \\
+      \end{longtable}
+}
+\newpage
+\section{Отчеты}
+\subsection{Отчет №1. Отчет о зависимостии оценки от сложности задания}
+Выполнил: Колесников Михаил Леонидович.
+Инструментальные средства: matplotlib, python.
+Дата: 26.05.2025
+\begin{lstlisting}[language=SQL, frame=none, numbers=none, caption={1. Точечная диаграмма: зависимость оценки от сложности задания}]
+SELECT 
+      t.price AS task_price,
+      AVG(wt.grade) AS average_grade
+FROM WrittenTask wt
+JOIN Task t ON wt.task_id = t.task_id
+GROUP BY t.price
+ORDER BY t.price;
+            \end{lstlisting}
+
+\includegraphics[width=14cm]{data/plots/task_price_vs_grade.png}
+\newpage
+\subsection{Отчет №2. Отчет о статусох экзаменов}
+Выполнил: Колесников Михаил Леонидович.
+Инструментальные средства: matplotlib, python.
+Дата: 26.05.2025
+
+\begin{lstlisting}[language=SQL, frame=none, numbers=none, caption={2. Круговая диаграмма статусов экзаменов}]
+SELECT
+    status,
+    COUNT(*) AS count,
+    ROUND(COUNT(*) * 100.0 / total.total, 2) AS percentage
+FROM ExamResult
+CROSS JOIN (SELECT COUNT(*) AS total FROM ExamResult) AS total
+GROUP BY status, total.total;
+            \end{lstlisting}
+\includegraphics[width=14cm]{data/plots/exam_statuses_distribution.png}
+\newpage
+\subsection{Отчет №3. Отчет о распределении учащихся по школах}
+Выполнил: Колесников Михаил Леонидович.
+Инструментальные средства: matplotlib, python.
+Дата: 26.05.2025
+
+\begin{lstlisting}[language=SQL, frame=none, numbers=none, caption={3. Столбчатая диаграмма распределения учащихся по школам}]
+SELECT s.school_name, COUNT(p.person_id) AS student_count
+FROM School s
+JOIN Person p ON s.school_id = p.school_id
+WHERE p.role = 'SchoolChild'
+GROUP BY s.school_name
+ORDER BY student_count DESC;
+            \end{lstlisting}
+\includegraphics[width=14cm]{data/plots/students_per_school.png}
+\newpage
+\section{Приложение}
+\section*{\hfill Приложение 1\hfill}
+\subsection{Создание базы данных}
+\label{subsec:db-create}
+\lstinputlisting[language=yaml, label={lst:docker-compose}, caption={Конфигурация Docker Compose}, frame=none, numbers=none]{data/database_creating.yml}
+
+\subsection{Создание таблиц}
+\label{subsec:table-create}
+\lstinputlisting[language=SQL, label={lst:sql-example}, caption={SQL-запросы для создания таблиц}, frame=none, numbers=none]{data/tables_creating.sql}
+
+\section*{\hfill Приложение 2\hfill}
+\subsection{Заполнение таблиц. ETL-процессы загрузки базы данных}
+
+\subsubsection{}
+\label{subsec:python1}
+\lstinputlisting[language=python, label={lst:python1}, frame=none, numbers=none, caption={python-код для генерации заданий}]{/home/user_name/VScodeProjects/DB2/tables_filling/create_tasks.py}
+\subsubsection{}
+\label{subsec:python2}
+\lstinputlisting[language=python, label={lst:python2}, frame=none, numbers=none, caption={python-код для генерации школ}]{/home/user_name/VScodeProjects/DB2/tables_filling/create_schools.py}
+\subsubsection{}
+\label{subsec:python3}
+\lstinputlisting[language=python, label={lst:python3}, frame=none, numbers=none, caption={python-код для генерации экзаменов}]{/home/user_name/VScodeProjects/DB2/tables_filling/create_exams.py}
+\subsubsection{}
+\label{subsec:python4}
+\lstinputlisting[language=python, label={lst:python4}, frame=none, numbers=none, caption={python-код для генерации учителей}]{/home/user_name/VScodeProjects/DB2/tables_filling/create_teachers.py}
+\subsubsection{}
+\label{subsec:python5}
+\lstinputlisting[language=python, label={lst:python5}, frame=none, numbers=none, caption={python-код для генерации школьников}]{/home/user_name/VScodeProjects/DB2/tables_filling/create_schoolchildren.py}
+
+\section*{\hfill Приложение 3\hfill}
+\subsection{Запросы в терминах SQL}
+\subsubsection{}
+\label{subsec:sql1}
+\begin{lstlisting}[language=SQL, label={lst:sql1}, frame=none, numbers=none, caption={SQL-запрос 1}]
 SELECT DISTINCT p.person_id
 FROM Person p
 JOIN Subject s ON p.subject_id = s.subject_id
 JOIN PersonExam pe ON p.person_id = pe.person_id
 WHERE p.role = 'Teacher' AND s.name = 'Name';
             \end{lstlisting}
-
-      \item Найти всех школьников, не зарегистрированных ни на один экзамен
-            \begin{lstlisting}[language=SQL, label={lst:sql-example}, frame=none, numbers=none]
+\subsubsection{}
+\label{subsec:sql2}
+\begin{lstlisting}[language=SQL, label={lst:sql2}, frame=none, numbers=none, caption={SQL-запрос 2}]
 SELECT p.person_id
 FROM Person p
 WHERE p.role = 'SchoolChild' 
 AND p.person_id NOT IN (SELECT person_id FROM PersonExam);
 \end{lstlisting}
-
-      \item Получить список предметов, по которым проводились экзамены в школе Name
-            \begin{lstlisting}[language=SQL, label={lst:sql-example}, frame=none, numbers=none]
+\subsubsection{}
+\label{subsec:sql3}
+\begin{lstlisting}[language=SQL, label={lst:sql3}, frame=none, numbers=none, caption={SQL-запрос 3}]
 SELECT DISTINCT s.subject_id
 FROM Exam e
+JOIN Classroom c ON e.classroom_id = c.classroom_id
 JOIN Subject s ON e.subject_id = s.subject_id
-JOIN School sc ON e.school_id = sc.school_id
-WHERE sc.school_name = 'Name';
+JOIN School sc ON c.school_id = sc.school_id
+WHERE sc.school_name = 'Школа №0';
             \end{lstlisting}
-
-      \item Найти всех учеников, получивших хотя бы одну неудовлетворительную оценку (<40)
-            \begin{lstlisting}[language=SQL, label={lst:sql-example}, frame=none, numbers=none]
+\subsubsection{}
+\label{subsec:sql4}
+\begin{lstlisting}[language=SQL, label={lst:sql4}, frame=none, numbers=none, caption={SQL-запрос 4}]
 SELECT DISTINCT p.person_id
 FROM Person p
 JOIN ExamResult er ON p.person_id = er.person_id
 WHERE p.role = 'SchoolChild' AND er.score < 40;
             \end{lstlisting}
-
-      \item Получить список школ, в которых нет зарегистрированных экзаменов
-            \begin{lstlisting}[language=SQL, label={lst:sql-example}, frame=none, numbers=none]
+\subsubsection{}
+\label{subsec:sql5}
+\begin{lstlisting}[language=SQL, label={lst:sql5}, frame=none, numbers=none, caption={SQL-запрос 5}]
 SELECT s.school_id
 FROM School s
 WHERE s.school_id NOT IN (SELECT school_id FROM Exam);
 \end{lstlisting}
-
-      \item Найти всех школьников, у которых по всем предметам, которые он сдавал, 100 баллов
-            \begin{lstlisting}[language=SQL, label={lst:sql-example}, frame=none, numbers=none]
+\subsubsection{}
+\label{subsec:sql6}
+\begin{lstlisting}[language=SQL, label={lst:sql6}, frame=none, numbers=none, caption={SQL-запрос 6}]
 WITH SchoolChildren AS (
     SELECT p.person_id, er.score
     FROM Person p
@@ -410,94 +590,53 @@ WHERE NOT EXISTS (
 );
             \end{lstlisting}
 
-      \item Получить всех учителей, которые преподают в школе, не находящейся в городе, в котором они живут
-            \begin{lstlisting}[language=SQL, label={lst:sql-example}, frame=none, numbers=none]
-SELECT DISTINCT p.person_id
-FROM Person p
-JOIN Address pa ON p.address_id = pa.address_id
-JOIN School s ON p.school_id = s.school_id
-JOIN Address sa ON s.address_id = sa.address_id
-WHERE p.role = 'Teacher' AND pa.city != sa.city;
-\end{lstlisting}
-\end{itemize}
+\subsubsection{}
+\label{subsec:sql7}
+\begin{lstlisting}[language=SQL, label={lst:sql7}, frame=none, numbers=none, caption={SQL-запрос 7}]
+SELECT 
+    s.school_name,
+    sub.name AS subject_name,
+    COUNT(er.exam_result_id) AS exams_taken,
+    AVG(er.score) AS avg_score,
+    MAX(er.score) AS max_score
+FROM 
+    ExamResult er
+    JOIN Subject sub ON er.subject_id = sub.subject_id
+    JOIN Person p ON er.person_id = p.person_id
+    JOIN School s ON p.school_id = s.school_id
+GROUP BY 
+    s.school_name, sub.name
+HAVING 
+    AVG(er.score) > 70 AND
+    COUNT(er.exam_result_id) > 5
+ORDER BY 
+    avg_score DESC;
+            \end{lstlisting}
+\subsubsection{}
+\label{subsec:sql8}
+\begin{lstlisting}[language=SQL, label={lst:sql8}, frame=none, numbers=none, caption={SQL-запрос 8}]
+WITH student_rank AS (
+    SELECT 
+        p.person_id,
+        AVG(er.score) AS average_score,
+        DENSE_RANK() OVER (ORDER BY AVG(er.score) DESC) AS rank
+    FROM 
+        Person p
+        JOIN ExamResult er ON p.person_id = er.person_id
+    WHERE 
+        p.role = 'SchoolChild'
+        AND er.status = 'Passed'
+    GROUP BY 
+        p.person_id
+)
+SELECT 
+    person_id,
+    ROUND(average_score, 2)
+FROM 
+    student_rank
+WHERE 
+    rank = 1;
+            \end{lstlisting}
 
-\subsection{Оценка размеров базы данных и каждого из файлов}
-
-\begin{longtable}{|l|p{2cm}|r|r|r|r|r|}
-      \hline
-      \textbf{Relation} & \textbf{Attributes}            & \textbf{Size (bytes)} & \textbf{Avg Records}       & \textbf{Total Size (bytes)}   & \textbf{Total Size (MB)} \\ \hline
-      \endhead
-
-      \multirow{5}{*}{Address}
-                        & address\_id (SERIAL)           & 4                     & \multirow{5}{*}{251,000}   & \multirow{5}{*}{44,678,000}   & \multirow{5}{*}{42.6}    \\
-                        & region (VARCHAR(40))           & 40                    &                            &                               &                          \\
-                        & city (VARCHAR(30))             & 30                    &                            &                               &                          \\
-                        & street (VARCHAR(100))          & 100                   &                            &                               &                          \\
-                        & postal\_code (INTEGER)         & 4                     &                            &                               &                          \\ \hline
-
-      \multirow{3}{*}{School}
-                        & school\_id (SERIAL)            & 4                     & \multirow{3}{*}{1,000}     & \multirow{3}{*}{158,000}      & \multirow{3}{*}{0.15}    \\
-                        & school\_name (VARCHAR(150))    & 150                   &                            &                               &                          \\
-                        & address\_id (INTEGER)          & 4                     &                            &                               &                          \\ \hline
-
-      \multirow{11}{*}{Person}
-                        & person\_id (SERIAL)            & 4                     & \multirow{11}{*}{650,000}  & \multirow{11}{*}{123,500,000} & \multirow{11}{*}{117.8}  \\
-                        & passport\_series (VARCHAR(10)) & 10                    &                            &                               &                          \\
-                        & passport\_number (VARCHAR(10)) & 10                    &                            &                               &                          \\
-                        & last\_name (VARCHAR(50))       & 50                    &                            &                               &                          \\
-                        & first\_name (VARCHAR(50))      & 50                    &                            &                               &                          \\
-                        & middle\_name (VARCHAR(50))     & 50                    &                            &                               &                          \\
-                        & birthday (DATE)                & 4                     &                            &                               &                          \\
-                        & role (person\_role)            & 10                    &                            &                               &                          \\
-                        & address\_id (INTEGER)          & 4                     &                            &                               &                          \\
-                        & school\_id (INTEGER)           & 4                     &                            &                               &                          \\
-                        & subject\_id (INTEGER)          & 4                     &                            &                               &                          \\ \hline
-
-      \multirow{3}{*}{Subject}
-                        & subject\_id (SERIAL)           & 4                     & \multirow{3}{*}{16}        & \multirow{3}{*}{2,144}        & \multirow{3}{*}{0.002}   \\
-                        & name (VARCHAR(30))             & 30                    &                            &                               &                          \\
-                        & score\_mapping\_json (JSONB)   & 100                   &                            &                               &                          \\ \hline
-
-      \multirow{5}{*}{Exam}
-                        & exam\_id (SERIAL)              & 4                     & \multirow{5}{*}{8,000}     & \multirow{5}{*}{192,000}      & \multirow{5}{*}{0.18}    \\
-                        & date\_time (TIMESTAMP)         & 8                     &                            &                               &                          \\
-                        & subject\_id (INTEGER)          & 4                     &                            &                               &                          \\
-                        & school\_id (INTEGER)           & 4                     &                            &                               &                          \\
-                        & classroom\_id (INTEGER)        & 4                     &                            &                               &                          \\ \hline
-
-      \multirow{7}{*}{ExamResult}
-                        & exam\_result\_id (SERIAL)      & 4                     & \multirow{7}{*}{1,500,000} & \multirow{7}{*}{195,000,000}  & \multirow{7}{*}{186.0}   \\
-                        & score (INTEGER)                & 4                     &                            &                               &                          \\
-                        & status (exam\_result\_status)  & 10                    &                            &                               &                          \\
-                        & comments (VARCHAR)             & 100                   &                            &                               &                          \\
-                        & person\_id (INTEGER)           & 4                     &                            &                               &                          \\
-                        & subject\_id (INTEGER)          & 4                     &                            &                               &                          \\
-                        & exam\_id (INTEGER)             & 4                     &                            &                               &                          \\ \hline
-
-      \multirow{6}{*}{Task}
-                        & task\_id (SERIAL)              & 4                     & \multirow{6}{*}{48,000}    & \multirow{6}{*}{5,760,000}    & \multirow{6}{*}{5.49}    \\
-                        & number (INTEGER)               & 4                     &                            &                               &                          \\
-                        & description (VARCHAR)          & 100                   &                            &                               &                          \\
-                        & price (INTEGER)                & 4                     &                            &                               &                          \\
-                        & variant (INTEGER)              & 4                     &                            &                               &                          \\
-                        & subject\_id (INTEGER)          & 4                     &                            &                               &                          \\ \hline
-
-      \multirow{3}{*}{Classroom}
-                        & classroom\_id (SERIAL)         & 4                     & \multirow{3}{*}{20,000}    & \multirow{3}{*}{360,000}      & \multirow{3}{*}{0.34}    \\
-                        & number (VARCHAR(10))           & 10                    &                            &                               &                          \\
-                        & school\_id (INTEGER)           & 4                     &                            &                               &                          \\ \hline
-
-      \multirow{3}{*}{WrittenTask}
-                        & task\_id (INTEGER)             & 4                     & \multirow{3}{*}{3,000,000} & \multirow{3}{*}{36,000,000}   & \multirow{3}{*}{34.33}   \\
-                        & person\_id (INTEGER)           & 4                     &                            &                               &                          \\
-                        & grade (INTEGER)                & 4                     &                            &                               &                          \\ \hline
-
-      \multirow{2}{*}{PersonExam}
-                        & person\_id (INTEGER)           & 4                     & \multirow{2}{*}{1,500,000} & \multirow{2}{*}{12,000,000}   & \multirow{2}{*}{11.44}   \\
-                        & exam\_id (INTEGER)             & 4                     &                            &                               &                          \\ \hline
-\end{longtable}
-
-\end{document}
-\section{Приложение. Отчеты}
 
 \end{document}

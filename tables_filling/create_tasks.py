@@ -62,8 +62,12 @@ def generate_tasks():
             with conn.cursor() as cur:
                 subject_id_to_name, subject_name_to_id, subject_id_to_tasks = create_and_get_subjects_data()
 
-                task_id_to_task_data, task_number_subject_to_ids = create_tasks(cur, subject_id_to_name, subjects_points,
-                                                                                number_of_variants_per_subject)
+                task_id_to_task_data, task_number_subject_to_ids = create_tasks(
+                    cur, 
+                    subject_id_to_name, 
+                    subjects_points, 
+                    number_of_variants_per_subject
+                )
 
                 with open('subject_id_to_tasks.pkl', 'wb') as f:
                     pickle.dump(subject_id_to_tasks, f)

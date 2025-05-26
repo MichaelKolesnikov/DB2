@@ -1,41 +1,32 @@
-import random
-
 from faker import Faker
 import psycopg2
 
-from initial_data_preparing.cities_creating import get_cities_states_info
-
-
 def generate_school():
-    def create_addresses_for_schools(cur, faker: Faker, count, city_id_to_name, city_id_to_state_id, state_id_to_name):
-        city_count = len(city_id_to_state_id)
+    def create_addresses_for_schools(cur, faker: Faker, count):
         final_data = []
         for address_id in range(count):
-            city_id = address_id % city_count
             address = (
                 address_id,
-                state_id_to_name[city_id_to_state_id[city_id]],
-                city_id_to_name[city_id],
                 faker.street_name(),
                 faker.postcode(),
             )
             final_data.append(address)
 
         cur.executemany(
-            "INSERT INTO Address (address_id, region, city, street, postal_code) VALUES (%s, %s, %s, %s, %s);",
+            "INSERT INTO Address (address_id, street, postal_code) VALUES (%s, %s, %s);",
             final_data,
         )
 
-    def create_schools(cur, faker, school_count, city_id_to_name, city_id_to_state_id, state_id_to_name):
-        create_addresses_for_schools(cur, faker, school_count, city_id_to_name, city_id_to_state_id, state_id_to_name)
+    def create_schools(cur, faker, school_count):
+        create_addresses_for_schools(cur, faker, school_count)
         school_data = []
         for i in range(school_count):
             school_name = f"Школа №{i}"
             school_data.append(
-                (i, school_name, i)
+                (i, school_name, i, i)
             )
         cur.executemany(
-            "INSERT INTO School (school_id, school_name, address_id) VALUES (%s, %s, %s);",
+            "INSERT INTO School (school_id, school_name, address_id, school_number) VALUES (%s, %s, %s, %s);",
             school_data,
         )
 
@@ -59,8 +50,7 @@ def generate_school():
 
         with psycopg2.connect(**db_config) as conn:
             with conn.cursor() as cur:
-                city_id_to_name, city_id_to_state_id, state_id_to_name = get_cities_states_info()
-                create_schools(cur, faker, school_count, city_id_to_name, city_id_to_state_id, state_id_to_name)
+                create_schools(cur, faker, school_count)
                 create_classrooms(cur, school_count)
 
 

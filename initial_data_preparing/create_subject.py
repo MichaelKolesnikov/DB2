@@ -3,30 +3,31 @@ import psycopg2
 from config.config import db_config
 
 
+def parse_subject_mapping(file_path):
+    points = {}
+
+    with open(file_path, 'r', encoding='utf-8') as file:
+        current_subject = None
+        for line in file.read().split('\n'):
+            if not line:
+                continue
+            if line[0].isalpha():
+                current_subject = line
+                points[current_subject] = {}
+                continue
+
+            tasks, price = line.split()
+            if '-' in tasks:
+                task1, task2 = map(int, tasks.split('-'))
+            else:
+                task1 = task2 = int(tasks)
+            for i in range(task1, task2 + 1):
+                points[current_subject][i] = price
+
+    return points
+
+
 def create_and_get_subjects_data():
-    def parse_subject_mapping(file_path):
-        points = {}
-
-        with open(file_path, 'r', encoding='utf-8') as file:
-            current_subject = None
-            for line in file.read().split('\n'):
-                if not line:
-                    continue
-                if line[0].isalpha():
-                    current_subject = line
-                    points[current_subject] = {}
-                    continue
-
-                tasks, price = line.split()
-                if '-' in tasks:
-                    task1, task2 = map(int, tasks.split('-'))
-                else:
-                    task1 = task2 = int(tasks)
-                for i in range(task1, task2 + 1):
-                    points[current_subject][i] = price
-
-        return points
-
     def create_subjects(cur):
         subjects_points = parse_subject_mapping("initial_data_preparing/subject_data.txt")
         subjects_data = []

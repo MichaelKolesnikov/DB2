@@ -1,30 +1,52 @@
 \babel@toc {russian}{}\relax 
-\contentsline {section}{\numberline {1}Описание предметной области}{3}{section.1}%
-\contentsline {subsection}{\numberline {1.1}Формулировка задания}{3}{subsection.1.1}%
-\contentsline {subsection}{\numberline {1.2}Конкретизация предметной области}{3}{subsection.1.2}%
-\contentsline {subsection}{\numberline {1.3}Пользователи системы}{3}{subsection.1.3}%
-\contentsline {subsection}{\numberline {1.4}Сроки хранения информации}{3}{subsection.1.4}%
-\contentsline {subsection}{\numberline {1.5}События, изменяющие состояние базы данных}{3}{subsection.1.5}%
-\contentsline {subsection}{\numberline {1.6}Основные запросы к базе данных (на естественном языке)}{4}{subsection.1.6}%
-\contentsline {section}{\numberline {2}Концептуально-информационная модель предметной области}{5}{section.2}%
-\contentsline {subsection}{\numberline {2.1}Er-диаграмма модели}{5}{subsection.2.1}%
-\contentsline {subsection}{\numberline {2.2}Оценка мощностных характеристик сущностей и связей}{6}{subsection.2.2}%
-\contentsline {subsubsection}{\numberline {2.2.1}Оценка мощностных характеристик сущностей}{6}{subsubsection.2.2.1}%
-\contentsline {subsubsection}{\numberline {2.2.2}Оценка мощностных характеристик связей}{6}{subsubsection.2.2.2}%
-\contentsline {section}{\numberline {3}Концептуальное проектирование}{7}{section.3}%
-\contentsline {subsection}{\numberline {3.1}Принятые проектные соглашения}{7}{subsection.3.1}%
-\contentsline {subsection}{\numberline {3.2}Обоснование выбора модели базы данных}{7}{subsection.3.2}%
-\contentsline {subsection}{\numberline {3.3}Используемые в системе кодификаторы}{8}{subsection.3.3}%
-\contentsline {subsection}{\numberline {3.4}Концептуальная модель базы данных}{9}{subsection.3.4}%
-\contentsline {section}{\numberline {4}Логическое проектирование}{10}{section.4}%
-\contentsline {subsection}{\numberline {4.1}Er-диаграмма базы данных (logical)}{10}{subsection.4.1}%
-\contentsline {subsection}{\numberline {4.2}Схемы отношений базы данных (physical)}{11}{subsection.4.2}%
-\contentsline {subsection}{\numberline {4.3}Схема реляционной базы данных}{12}{subsection.4.3}%
-\contentsline {subsection}{\numberline {4.4}Схемы основных запросов на реляционной алгебре}{12}{subsection.4.4}%
-\contentsline {section}{\numberline {5}Физическое проектирование}{13}{section.5}%
-\contentsline {subsection}{\numberline {5.1}Обоснование выбора конкретной СУБД}{13}{subsection.5.1}%
-\contentsline {subsection}{\numberline {5.2}Создание базы данных}{13}{subsection.5.2}%
+\contentsline {section}{\numberline {1}Описание предметной области}{4}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Формулировка задания}{4}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}Конкретизация предметной области}{4}{subsection.1.2}%
+\contentsline {subsection}{\numberline {1.3}Пользователи системы}{4}{subsection.1.3}%
+\contentsline {subsection}{\numberline {1.4}Сроки хранения информации}{4}{subsection.1.4}%
+\contentsline {subsection}{\numberline {1.5}События, изменяющие состояние базы данных}{4}{subsection.1.5}%
+\contentsline {subsection}{\numberline {1.6}Основные запросы к базе данных (на естественном языке)}{5}{subsection.1.6}%
+\contentsline {section}{\numberline {2}Концептуально-информационная модель предметной области}{6}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Er-диаграмма модели}{6}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Оценка мощностных характеристик сущностей и связей}{7}{subsection.2.2}%
+\contentsline {subsubsection}{\numberline {2.2.1}Оценка мощностных характеристик сущностей}{7}{subsubsection.2.2.1}%
+\contentsline {subsubsection}{\numberline {2.2.2}Оценка мощностных характеристик связей}{7}{subsubsection.2.2.2}%
+\contentsline {section}{\numberline {3}Концептуальное проектирование}{8}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Принятые проектные соглашения}{8}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Обоснование выбора модели базы данных}{8}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Используемые в системе кодификаторы}{9}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Концептуальная модель базы данных}{10}{subsection.3.4}%
+\contentsline {section}{\numberline {4}Логическое проектирование}{11}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Er-диаграмма базы данных (logical)}{11}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Схемы отношений базы данных (physical)}{12}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Схема реляционной базы данных}{13}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}Схемы основных запросов на реляционной алгебре}{13}{subsection.4.4}%
+\contentsline {section}{\numberline {5}Физическое проектирование}{14}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Обоснование выбора конкретной СУБД}{14}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Создание базы данных}{14}{subsection.5.2}%
 \contentsline {subsection}{\numberline {5.3}Создание таблиц}{14}{subsection.5.3}%
-\contentsline {subsection}{\numberline {5.4}Заполнение таблиц. ETL-процессы загрузки базы данных}{16}{subsection.5.4}%
-\contentsline {subsection}{\numberline {5.5}Запросы в терминах SQL}{16}{subsection.5.5}%
-\contentsline {subsection}{\numberline {5.6}Оценка размеров базы данных и каждого из файлов}{17}{subsection.5.6}%
+\contentsline {subsection}{\numberline {5.4}Заполнение таблиц. ETL-процессы загрузки базы данных}{14}{subsection.5.4}%
+\contentsline {subsection}{\numberline {5.5}Запросы в терминах SQL}{15}{subsection.5.5}%
+\contentsline {subsection}{\numberline {5.6}Оценка размеров базы данных и каждого из файлов}{15}{subsection.5.6}%
+\contentsline {section}{\numberline {6}Отчеты}{17}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Отчет №1. Отчет о зависимостии оценки от сложности задания}{17}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Отчет №2. Отчет о статусох экзаменов}{18}{subsection.6.2}%
+\contentsline {subsection}{\numberline {6.3}Отчет №3. Отчет о распределении учащихся по школах}{19}{subsection.6.3}%
+\contentsline {section}{\numberline {7}Приложение}{20}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Создание базы данных}{20}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}Создание таблиц}{20}{subsection.7.2}%
+\contentsline {subsection}{\numberline {7.3}Заполнение таблиц. ETL-процессы загрузки базы данных}{22}{subsection.7.3}%
+\contentsline {subsubsection}{\numberline {7.3.1}}{22}{subsubsection.7.3.1}%
+\contentsline {subsubsection}{\numberline {7.3.2}}{24}{subsubsection.7.3.2}%
+\contentsline {subsubsection}{\numberline {7.3.3}}{25}{subsubsection.7.3.3}%
+\contentsline {subsubsection}{\numberline {7.3.4}}{26}{subsubsection.7.3.4}%
+\contentsline {subsubsection}{\numberline {7.3.5}}{28}{subsubsection.7.3.5}%
+\contentsline {subsection}{\numberline {7.4}Запросы в терминах SQL}{32}{subsection.7.4}%
+\contentsline {subsubsection}{\numberline {7.4.1}}{32}{subsubsection.7.4.1}%
+\contentsline {subsubsection}{\numberline {7.4.2}}{32}{subsubsection.7.4.2}%
+\contentsline {subsubsection}{\numberline {7.4.3}}{32}{subsubsection.7.4.3}%
+\contentsline {subsubsection}{\numberline {7.4.4}}{32}{subsubsection.7.4.4}%
+\contentsline {subsubsection}{\numberline {7.4.5}}{32}{subsubsection.7.4.5}%
+\contentsline {subsubsection}{\numberline {7.4.6}}{33}{subsubsection.7.4.6}%
+\contentsline {subsubsection}{\numberline {7.4.7}}{33}{subsubsection.7.4.7}%
+\contentsline {subsubsection}{\numberline {7.4.8}}{33}{subsubsection.7.4.8}%
